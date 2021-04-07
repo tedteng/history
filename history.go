@@ -32,9 +32,9 @@ type History struct {
 	ConfigPath string
 }
 
-func (h *History) Settings(path string) *History {
-	h.ConfigPath = path
-	return h
+func Settings(path string) *History {
+	// h.ConfigPath = path
+	return &History{ConfigPath: path}
 }
 
 func (h *History) Write(i interface{}) {
