@@ -17,10 +17,15 @@ package history
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
+	"syscall"
+
+	"github.com/manifoldco/promptui"
 )
 
 type History struct {
@@ -28,7 +33,8 @@ type History struct {
 }
 
 func (h *History) Settings(path string) *History {
-	return &History{ConfigPath: path}
+	h.ConfigPath = path
+	return h
 }
 
 func (h *History) Write(i interface{}) {
@@ -99,4 +105,35 @@ func isLineBreak(str string) string {
 		return str
 	}
 	return str + "\n"
+}
+
+func prompt(str []string) string {
+	prompt := promptui.Select{
+		Label: "Prvious",
+		Items: str,
+	}
+
+	_, result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return ""
+	}
+
+	fmt.Printf("You choose %q\n", result)
+	return result
+}
+
+func executeaa(result string) {
+	binary, lookErr := exec.LookPath("gardenctl")
+	if lookErr != nil {
+		panic(lookErr)
+	}
+
+	args := strings.Split(result, " ")
+	env := os.Environ()
+	execErr := syscall.Exec(binary, args, env)
+	if execErr != nil {
+		panic(execErr)
+	}
 }
