@@ -83,6 +83,7 @@ func (h *History) Previous() {
 
 	if len(load) <= 1 {
 		fmt.Println("history empty")
+		os.Exit(0)
 	}
 
 	item := make([]string, 1)
@@ -96,7 +97,7 @@ func (h *History) Previous() {
 	_, result, err := prompt.Run()
 
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
+		log.Fatalln("Prompt failed: \n", err)
 	}
 	executeItem(result)
 }
@@ -113,11 +114,11 @@ func (h *History) List() {
 	i, _, err := prompt.Run()
 
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
+		log.Fatalln("Prompt failed: \n", err)
 	}
 
 	item := load[i]
-	// return strings.Fields(item)
+
 	executeItem(item)
 }
 
