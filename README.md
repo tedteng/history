@@ -5,25 +5,37 @@ history cli is a simple package provider a history list , recall previous histor
 
 ## Basic Usage
 
+## Basic Usage
+
+list history items and execute the select one
 ```go
 package main
 
 import (
-    "https://github.com/tedteng/history"
+    "https://github.tools.sap/kc/history"
 )
 func main() {
     pathHistory := "/tmp/history"
     h := history.Settings(pathHistory)
-    
-    // list history records and executed after select item
-    if list {
-        h.List()
-    } else {
-    // execute Previous history item
-        h.Previous()
+    h.List()
+}
+```
+
+execute previous history item 
+```go
+package main
+
+import (
+    "https://github.tools.sap/kc/history"
+)
+func main() {
+    pathHistory := "/tmp/history"
+    h := history.Settings(pathHistory)
+    h.Previous()
     }
 }
 ```
+
 The promptui feature use from  [promptui](https://raw.githubusercontent.com/manifoldco/promptui/)
 
 
