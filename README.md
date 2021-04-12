@@ -11,7 +11,7 @@ package main
 
 import (
     "os",
-    "https://github.tools.sap/kc/history"
+    "github.tools.sap/kc/history"
 )
 func main() {
     pathHistory := "/tmp/history"
@@ -25,7 +25,7 @@ list history items and execute the selected item
 package main
 
 import (
-    "https://github.tools.sap/kc/history"
+    "github.tools.sap/kc/history"
 )
 func main() {
     pathHistory := "/tmp/history"
@@ -40,7 +40,7 @@ execute previous history item.
 package main
 
 import (
-    "https://github.tools.sap/kc/history"
+    "github.tools.sap/kc/history"
 )
 func main() {
     pathHistory := "/tmp/history"
