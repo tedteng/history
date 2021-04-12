@@ -2,12 +2,25 @@
 
 ## Overview
 history cli is a simple package provider a history list , recall previous history command and execute for any golang cli.
-
 ## Basic Usage
 
-## Basic Usage
+Write history items to local before list or privouse item call
 
-list history items and execute the select one
+```go
+package main
+
+import (
+    "os",
+    "https://github.tools.sap/kc/history"
+)
+func main() {
+    pathHistory := "/tmp/history"
+    h := history.Settings(pathHistory)
+    h.Write(os.Args[0:]) 
+}
+```
+
+list history items and execute the selected item
 ```go
 package main
 
@@ -21,7 +34,8 @@ func main() {
 }
 ```
 
-execute previous history item 
+execute previous history item.
+
 ```go
 package main
 
@@ -32,9 +46,9 @@ func main() {
     pathHistory := "/tmp/history"
     h := history.Settings(pathHistory)
     h.Previous()
-    }
 }
 ```
+
 
 The promptui feature use from  [promptui](https://raw.githubusercontent.com/manifoldco/promptui/)
 
