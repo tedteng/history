@@ -22,6 +22,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"reflect"
 	"strings"
 	"syscall"
 
@@ -30,13 +31,18 @@ import (
 
 type History struct {
 	ConfigPath string
+	Usage      func()
 }
 
+//Setting History
 func Settings(path string) *History {
-	// h.ConfigPath = path
-	return &History{ConfigPath: path}
+	h := &History{
+		ConfigPath: path,
+	}
+	return h
 }
 
+//Wrtie history record
 func (h *History) Write(i interface{}) {
 	f, err := os.OpenFile(h.ConfigPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
@@ -48,6 +54,7 @@ func (h *History) Write(i interface{}) {
 	}
 }
 
+//Load History records
 func (h *History) Load() []string {
 	f, err := os.Open(h.ConfigPath)
 	if err != nil {
@@ -70,17 +77,63 @@ func (h *History) Load() []string {
 	return items
 }
 
-func (h *History) Previous() []string {
+//Previous History record display and execute
+func (h *History) Previous() {
 	load := h.Load()
 
 	if len(load) <= 1 {
-		return nil
+		fmt.Println("history empty")
 	}
 
 	item := make([]string, 1)
 	copy(item, load[len(load)-2:len(load)-1])
 
-	return item
+	prompt := promptui.Select{
+		Label: "Prvious",
+		Items: item,
+	}
+
+	_, result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+	}
+	executeItem(result)
+}
+
+//List all HIstory records and execute the select one
+func (h *History) List() {
+	load := reverse(h.Load())
+	prompt := promptui.Select{
+		Label: "Target hisotry",
+		Items: load,
+		Size:  10,
+	}
+
+	i, _, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+	}
+
+	item := load[i]
+	// return strings.Fields(item)
+	executeItem(item)
+}
+
+// execute Item
+func executeItem(result string) {
+	binary, lookErr := exec.LookPath("gardenctl")
+	if lookErr != nil {
+		panic(lookErr)
+	}
+
+	args := strings.Fields(result)
+	env := os.Environ()
+	execErr := syscall.Exec(binary, args, env)
+	if execErr != nil {
+		panic(execErr)
+	}
 }
 
 func convert(i interface{}) string {
@@ -90,12 +143,14 @@ func convert(i interface{}) string {
 		str = strings.Join(x, " ")
 	case []byte:
 		str = string(x[:])
+	case string:
+		str = x
 	/*
-		add more type assertion if need
+		add more convert if need
 	*/
 
 	default:
-		log.Fatalln("type unknown") // here v has type interface{}
+		log.Fatalln("convert type unknown")
 	}
 	return isLineBreak(str)
 }
@@ -107,33 +162,11 @@ func isLineBreak(str string) string {
 	return str + "\n"
 }
 
-func prompt(str []string) string {
-	prompt := promptui.Select{
-		Label: "Prvious",
-		Items: str,
+func reverse(s []string) []string {
+	n := reflect.ValueOf(s).Len()
+	swap := reflect.Swapper(s)
+	for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
+		swap(i, j)
 	}
-
-	_, result, err := prompt.Run()
-
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-		return ""
-	}
-
-	fmt.Printf("You choose %q\n", result)
-	return result
-}
-
-func executeaa(result string) {
-	binary, lookErr := exec.LookPath("gardenctl")
-	if lookErr != nil {
-		panic(lookErr)
-	}
-
-	args := strings.Split(result, " ")
-	env := os.Environ()
-	execErr := syscall.Exec(binary, args, env)
-	if execErr != nil {
-		panic(execErr)
-	}
+	return s
 }
