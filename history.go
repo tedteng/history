@@ -99,7 +99,7 @@ func (h *History) Previous() {
 	if err != nil {
 		log.Fatalln("Prompt failed: \n", err)
 	}
-	executeItem(result)
+	ExecuteItem("gardenctl", result)
 }
 
 //List all HIstory records and execute the select one
@@ -119,12 +119,12 @@ func (h *History) List() {
 
 	item := load[i]
 
-	executeItem(item)
+	ExecuteItem("gardenctl", item)
 }
 
 // execute Item
-func executeItem(result string) {
-	binary, lookErr := exec.LookPath("gardenctl")
+func ExecuteItem(binary string, result string) {
+	binary, lookErr := exec.LookPath(binary)
 	if lookErr != nil {
 		panic(lookErr)
 	}
