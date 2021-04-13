@@ -15,7 +15,7 @@ import (
 )
 func main() {
     pathHistory := "/tmp/history"
-    h := history.Settings(pathHistory)
+    h := history.Settings(pathHistory,"")
     h.Write(os.Args[0:]) 
 }
 ```
@@ -29,7 +29,7 @@ import (
 )
 func main() {
     pathHistory := "/tmp/history"
-    h := history.Settings(pathHistory)
+    h := history.Settings("","bash")  //binary for executed  eg os.Args[0] 
     h.List()
 }
 ```
@@ -44,7 +44,7 @@ import (
 )
 func main() {
     pathHistory := "/tmp/history"
-    h := history.Settings(pathHistory)
+    h := history.Settings("",os.Args[0])
     h.Previous()
 }
 ```
