@@ -31,13 +31,14 @@ import (
 
 type History struct {
 	ConfigPath string
-	Usage      func()
+	binary     string
 }
 
 //Setting History
-func Settings(path string) *History {
+func Settings(path string, binary string) *History {
 	h := &History{
 		ConfigPath: path,
+		binary:     binary,
 	}
 	return h
 }
@@ -99,7 +100,8 @@ func (h *History) Previous() {
 	if err != nil {
 		log.Fatalln("Prompt failed: \n", err)
 	}
-	ExecuteItem("gardenctl", result)
+	h.Write(result)
+	ExecuteItem(h.binary, result)
 }
 
 //List all HIstory records and execute the select one
@@ -118,8 +120,8 @@ func (h *History) List() {
 	}
 
 	item := load[i]
-
-	ExecuteItem("gardenctl", item)
+	h.Write(item)
+	ExecuteItem(h.binary, item)
 }
 
 // execute Item
